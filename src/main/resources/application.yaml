@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: grow1
+    server:
+  address: 0.0.0.0  # 🟢 ADICIONE ESTA LINHA PARA LIBERAR O ACESSO NA REDE LOCAL
+  port: 8080
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/grow1}
+    username: ${DATASOURCE_USER:root}
+    password: ${DATASOURCE_PWD:}
+    driver-class-name: ${DATASOURCE_DRIVER:com.mysql.cj.jdbc.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mellanievict@gmail.com
+    password: amdjwqdkxiksuynq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+task:
+    scheduling:
+      enabled: true
+
+cloudinary:
+  cloud-name: whwnnsyd
+  api-key: 855813416484976
+  api-secret: dcNP2mLcjPDMavbd9oH8S2RdffE

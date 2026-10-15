@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+*.log
+*.tmp
+.idea/
+*.iml
+.vscode/
+node_modules/
+www/
+.angular/
