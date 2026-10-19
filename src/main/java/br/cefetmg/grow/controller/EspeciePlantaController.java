@@ -71,8 +71,11 @@ public class EspeciePlantaController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Cadastrar nova espécie com upload de imagem")
     public ResponseEntity<EspeciePlantaResponseDTO> inserir(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario,
             @Valid @RequestPart("dto") EspeciePlantaRequestDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        dto.setUsuarioId(usuario.getId());
 
         if (file != null && !file.isEmpty()) {
             String imageUrl = cloudinaryService.uploadFile(file);
@@ -86,9 +89,12 @@ public class EspeciePlantaController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Atualizar espécie existente com upload de imagem opcional")
     public ResponseEntity<EspeciePlantaResponseDTO> atualizar(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario,
             @Parameter(description = "ID da espécie", required = true) @PathVariable Long id,
             @Valid @RequestPart("dto") EspeciePlantaRequestDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        dto.setUsuarioId(usuario.getId());
 
         if (file != null && !file.isEmpty()) {
             String imageUrl = cloudinaryService.uploadFile(file);

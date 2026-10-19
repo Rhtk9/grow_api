@@ -43,6 +43,11 @@ public class PlantaUsuarioController {
         return ResponseEntity.ok(plantaService.listarTodos());
     }
 
+    @GetMapping("/minhas")
+    public ResponseEntity<List<PlantaUsuarioResponseDTO>> minhas(@org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario) {
+        return ResponseEntity.ok(plantaService.listarPorUsuario(usuario.getId()));
+    }
+
     @GetMapping("/usuario/{usuarioId}")
     @Operation(summary = "Listar plantas de um usuário específico")
     public ResponseEntity<List<PlantaUsuarioResponseDTO>> listarPorUsuario(@PathVariable Long usuarioId) {
@@ -57,7 +62,8 @@ public class PlantaUsuarioController {
 
     @PostMapping
     @Operation(summary = "Criar uma nova planta para o usuário")
-    public ResponseEntity<PlantaUsuarioResponseDTO> criar(@Valid @RequestBody PlantaUsuarioRequestDTO dto) {
+    public ResponseEntity<PlantaUsuarioResponseDTO> criar(@org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario, @Valid @RequestBody PlantaUsuarioRequestDTO dto) {
+        dto.setUsuarioId(usuario.getId());
         PlantaUsuarioResponseDTO criado = plantaService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
@@ -65,8 +71,10 @@ public class PlantaUsuarioController {
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar informações cadastrais de uma planta do usuário")
     public ResponseEntity<PlantaUsuarioResponseDTO> atualizar(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario,
             @PathVariable Long id,
             @Valid @RequestBody PlantaUsuarioRequestDTO dto) {
+        dto.setUsuarioId(usuario.getId());
         return ResponseEntity.ok(plantaService.atualizar(id, dto));
     }
 

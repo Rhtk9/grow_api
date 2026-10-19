@@ -68,6 +68,10 @@ public class Usuario {
     @Column(name = "ativo")
     private Boolean ativo;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Perfil", length = 20)
+    private Perfil perfil;
+
     @CreationTimestamp
     @Column(name = "DtCadastro", nullable = false, updatable = false)
     private LocalDateTime dataCadastro;

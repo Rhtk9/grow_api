@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@lombok.Setter
 @NoArgsConstructor
 public class UsuarioTurmaRequestDTO {
 
     private Boolean ativo = true;
     private Boolean favorito = false;
 
-    @NotNull(message = "ID do usuário é obrigatório")
+    // preenchido automaticamente pelo token JWT
     private Long usuarioId;
 
     @NotNull(message = "ID da turma é obrigatório")

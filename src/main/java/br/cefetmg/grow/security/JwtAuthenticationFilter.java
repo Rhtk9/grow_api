@@ -51,7 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
                     
                     if (usuario != null) {
-                        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+                        br.cefetmg.grow.model.Perfil perfil = usuario.getPerfil() != null ? usuario.getPerfil() : br.cefetmg.grow.model.Perfil.ALUNO;
+                        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
                         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                                 usuario, null, authorities
                         );

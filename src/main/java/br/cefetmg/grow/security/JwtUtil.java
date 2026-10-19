@@ -29,6 +29,16 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String gerarToken(String email, String perfil) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("perfil", perfil)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(key)
+                .compact();
+    }
+
     public String extrairEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().getSubject();

@@ -39,7 +39,8 @@ public class ResponsavelController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponsavelResponseDTO> criar(@Valid @RequestBody ResponsavelRequestDTO dto) {
+    public ResponseEntity<ResponsavelResponseDTO> criar(@org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario, @Valid @RequestBody ResponsavelRequestDTO dto) {
+        dto.setResponsavelId(usuario.getId());
         ResponsavelResponseDTO criado = responsavelService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }

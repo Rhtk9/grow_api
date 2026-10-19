@@ -33,21 +33,29 @@ public class TurmaController {
         return ResponseEntity.ok(turmaService.listarPorUsuario(usuarioId));
     }
 
+    @GetMapping("/minhas")
+    public ResponseEntity<List<TurmaResponseDTO>> minhas(@org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario) {
+        return ResponseEntity.ok(turmaService.listarPorUsuario(usuario.getId()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TurmaResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(turmaService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<TurmaResponseDTO> criar(@Valid @RequestBody TurmaRequestDTO dto) {
+    public ResponseEntity<TurmaResponseDTO> criar(@org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario, @Valid @RequestBody TurmaRequestDTO dto) {
+        dto.setUsuarioId(usuario.getId());
         TurmaResponseDTO criada = turmaService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criada);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TurmaResponseDTO> atualizar(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario,
             @PathVariable Long id,
             @Valid @RequestBody TurmaRequestDTO dto) {
+        dto.setUsuarioId(usuario.getId());
         return ResponseEntity.ok(turmaService.atualizar(id, dto));
     }
 

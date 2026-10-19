@@ -45,8 +45,45 @@ public class SecurityConfig {
                                                 // 🟢 Libera o cadastro de usuários
                                                 .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
 
+                                                // ===== Regras por perfil =====
+                                                // Só PROFESSOR cria/altera/exclui turmas, atividades, disciplinas e conteúdos
+                                                .requestMatchers(HttpMethod.POST, "/api/turmas", "/api/turmas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PUT, "/api/turmas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/turmas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.POST, "/api/atividades", "/api/atividades/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PUT, "/api/atividades/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PATCH, "/api/atividades/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/atividades/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.POST, "/api/disciplinas", "/api/disciplinas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PUT, "/api/disciplinas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PATCH, "/api/disciplinas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/disciplinas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.POST, "/api/conteudos", "/api/conteudos/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PUT, "/api/conteudos/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PATCH, "/api/conteudos/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/conteudos/**").hasRole("PROFESSOR")
+                                                // Só PROFESSOR corrige e vê as entregas de uma atividade
+                                                .requestMatchers(HttpMethod.GET, "/api/usuarios-tarefas/atividade/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PATCH, "/api/usuarios-tarefas/*/concluir").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.PUT, "/api/usuarios-tarefas/**").hasRole("PROFESSOR")
+                                                .requestMatchers(HttpMethod.DELETE, "/api/usuarios-tarefas/**").hasRole("PROFESSOR")
+                                                // Só ALUNO entra em turma, pega e entrega atividade
+                                                .requestMatchers(HttpMethod.POST, "/api/usuarios-turmas").hasRole("ALUNO")
+                                                .requestMatchers(HttpMethod.POST, "/api/usuarios-tarefas", "/api/usuarios-tarefas/**").hasRole("ALUNO")
+
                                                 // 🟢 Qualquer outra rota exigirá um token JWT válido
                                                 .anyRequest().authenticated())
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint((req, res, e) -> {
+                                                        res.setStatus(401);
+                                                        res.setContentType("application/json;charset=UTF-8");
+                                                        res.getWriter().write("{\"status\":401,\"erro\":\"Não autenticado: token ausente ou inválido\"}");
+                                                })
+                                                .accessDeniedHandler((req, res, e) -> {
+                                                        res.setStatus(403);
+                                                        res.setContentType("application/json;charset=UTF-8");
+                                                        res.getWriter().write("{\"status\":403,\"erro\":\"Acesso negado: seu perfil não tem permissão para este recurso\"}");
+                                                }))
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();

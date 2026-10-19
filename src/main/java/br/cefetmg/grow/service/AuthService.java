@@ -19,6 +19,7 @@ public class AuthService {
         if (!usuario.getSenha().equals(senha)) {
             throw new RuntimeException("Credenciais inválidas");
         }
-        return jwtUtil.gerarToken(usuario.getEmail());
+        String perfil = (usuario.getPerfil() != null ? usuario.getPerfil() : br.cefetmg.grow.model.Perfil.ALUNO).name();
+        return jwtUtil.gerarToken(usuario.getEmail(), perfil);
     }
 }

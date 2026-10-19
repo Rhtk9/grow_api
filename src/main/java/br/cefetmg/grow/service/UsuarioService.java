@@ -51,6 +51,9 @@ public class UsuarioService {
 
         Usuario usuario = modelMapper.map(dto, Usuario.class);
         usuario.setAtivo(true);
+        if (usuario.getPerfil() == null) {
+            usuario.setPerfil(br.cefetmg.grow.model.Perfil.ALUNO);
+        }
         usuario.setSequenciaDias(0);
         usuario.setPontuacaoTotal(0);
         usuario.setNivelUsuario(1);

@@ -2,6 +2,7 @@ package br.cefetmg.grow.service;
 
 import br.cefetmg.grow.dto.UsuarioTarefaRequestDTO;
 import br.cefetmg.grow.dto.UsuarioTarefaResponseDTO;
+import br.cefetmg.grow.exception.BusinessException;
 import br.cefetmg.grow.exception.ResourceNotFoundException;
 import br.cefetmg.grow.model.Atividade;
 import br.cefetmg.grow.model.Usuario;
@@ -9,8 +10,10 @@ import br.cefetmg.grow.model.UsuarioTarefa;
 import br.cefetmg.grow.repository.AtividadeRepository;
 import br.cefetmg.grow.repository.UsuarioRepository;
 import br.cefetmg.grow.repository.UsuarioTarefaRepository;
+import br.cefetmg.grow.repository.UsuarioTurmaRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class UsuarioTarefaService {
     private final UsuarioTarefaRepository usuarioTarefaRepository;
     private final UsuarioRepository usuarioRepository;
     private final AtividadeRepository atividadeRepository;
+    private final UsuarioTurmaRepository usuarioTurmaRepository;
     private final ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
@@ -133,5 +137,68 @@ public class UsuarioTarefaService {
         
         UsuarioTarefa atualizado = usuarioTarefaRepository.save(usuarioTarefa);
         return new UsuarioTarefaResponseDTO(atualizado);
+    }
+
+    /**
+     * ALUNO "pega" a atividade: só é permitido se ele estiver na turma da atividade.
+     */
+    @Transactional
+    public UsuarioTarefaResponseDTO pegar(Usuario aluno, Long atividadeId) {
+        Atividade atividade = atividadeRepository.findById(atividadeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada. Id: " + atividadeId));
+
+        Long turmaId = atividade.getTurma().getId();
+        if (!usuarioTurmaRepository.existsByUsuarioIdAndTurmaId(aluno.getId(), turmaId)) {
+            throw new AccessDeniedException("Você precisa estar na turma desta atividade para pegá-la");
+        }
+        if (usuarioTarefaRepository.existsByUsuarioIdAndAtividadeId(aluno.getId(), atividadeId)) {
+            throw new BusinessException("Você já pegou esta atividade");
+        }
+
+        Usuario usuario = usuarioRepository.findById(aluno.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado. Id: " + aluno.getId()));
+
+        UsuarioTarefa tarefa = new UsuarioTarefa();
+        tarefa.setUsuario(usuario);
+        tarefa.setAtividade(atividade);
+        tarefa.setNota(BigDecimal.ZERO);
+        tarefa.setConcluida(false);
+        tarefa.setTempoGasto(0);
+        tarefa.setTentativas(0);
+        tarefa.setXpRecebido(0);
+        tarefa.setDataConclusao(LocalDate.now());
+
+        return new UsuarioTarefaResponseDTO(usuarioTarefaRepository.save(tarefa));
+    }
+
+    /**
+     * ALUNO entrega a atividade: só é permitido se ele já tiver pegado a atividade.
+     * A nota NÃO é definida pelo aluno (só o professor, em /concluir).
+     */
+    @Transactional
+    public UsuarioTarefaResponseDTO entregar(Usuario aluno, UsuarioTarefaRequestDTO dto) {
+        if (!aluno.getId().equals(dto.getUsuarioId())) {
+            throw new AccessDeniedException("Você só pode entregar atividades em seu próprio nome");
+        }
+
+        UsuarioTarefa tarefa = usuarioTarefaRepository
+                .findByUsuarioIdAndAtividadeId(aluno.getId(), dto.getAtividadeId())
+                .orElseThrow(() -> new BusinessException("Você precisa pegar a atividade antes de entregá-la"));
+
+        if (Boolean.TRUE.equals(tarefa.getConcluida())) {
+            throw new BusinessException("Esta atividade já foi corrigida pelo professor");
+        }
+
+        Integer limite = tarefa.getAtividade().getTentativas();
+        int usadas = tarefa.getTentativas() == null ? 0 : tarefa.getTentativas();
+        if (limite != null && usadas >= limite) {
+            throw new BusinessException("Limite de tentativas desta atividade atingido");
+        }
+
+        tarefa.setTempoGasto(dto.getTempoGasto());
+        tarefa.setTentativas(usadas + 1);
+        tarefa.setDataConclusao(LocalDate.now());
+
+        return new UsuarioTarefaResponseDTO(usuarioTarefaRepository.save(tarefa));
     }
 }

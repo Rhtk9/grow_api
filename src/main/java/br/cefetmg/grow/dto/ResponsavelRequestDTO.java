@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@lombok.Setter
 @NoArgsConstructor
 public class ResponsavelRequestDTO {
 
@@ -18,6 +19,5 @@ public class ResponsavelRequestDTO {
     @NotNull(message = "ID do aluno é obrigatório")
     private Long usuarioId; // ALUNO
 
-    @NotNull(message = "ID do responsável é obrigatório")
     private Long responsavelId; // RESPONSÁVEL (novo)
 }

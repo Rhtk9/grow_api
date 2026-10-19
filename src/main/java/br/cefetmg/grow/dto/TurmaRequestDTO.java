@@ -27,7 +27,7 @@ public class TurmaRequestDTO {
     @NotBlank(message = "Nível de ensino é obrigatório")
     private String nivelEnsino;
 
-    @NotNull(message = "ID do usuário é obrigatório")
+    // preenchido automaticamente pelo token JWT
     private Long usuarioId;
 
     private Long disciplinaId;

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Getter
+@lombok.Setter
 @NoArgsConstructor
 public class UsuarioTarefaRequestDTO {
 
-    @NotNull(message = "Nota é obrigatória")
     @DecimalMin(value = "0.0", message = "Nota deve ser entre 0 e 10")
     @DecimalMax(value = "10.0", message = "Nota deve ser entre 0 e 10")
     private BigDecimal nota;
@@ -26,8 +26,6 @@ public class UsuarioTarefaRequestDTO {
     @Positive(message = "Tempo gasto deve ser positivo")
     private Integer tempoGasto;
 
-    @NotNull(message = "Tentativas é obrigatório")
-    @Positive(message = "Tentativas deve ser positivo")
     private Integer tentativas;
 
     private Integer xpRecebido = 0;
@@ -35,6 +33,6 @@ public class UsuarioTarefaRequestDTO {
     @NotNull(message = "ID da atividade é obrigatório")
     private Long atividadeId;
 
-    @NotNull(message = "ID do usuário é obrigatório")
+    // preenchido automaticamente pelo token JWT
     private Long usuarioId;
 }

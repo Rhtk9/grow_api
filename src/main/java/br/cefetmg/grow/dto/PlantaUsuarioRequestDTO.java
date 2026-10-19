@@ -16,7 +16,6 @@ public class PlantaUsuarioRequestDTO {
     @Schema(description = "Apelido da planta", example = "Minha Jiboia")
     private String apelido;
 
-    @NotNull(message = "O ID do usuário é obrigatório")
     @Schema(description = "ID do usuário", example = "1")
     private Long usuarioId;
 

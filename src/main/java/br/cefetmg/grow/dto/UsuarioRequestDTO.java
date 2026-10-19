@@ -36,4 +36,7 @@ public class UsuarioRequestDTO {
     private Integer idioma;
     private Boolean notificacoes;
     private Boolean som;
+
+    // PROFESSOR, ALUNO ou RESPONSAVEL (padrão: ALUNO)
+    private br.cefetmg.grow.model.Perfil perfil;
 }

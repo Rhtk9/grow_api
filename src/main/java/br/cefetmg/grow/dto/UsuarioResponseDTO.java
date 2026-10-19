@@ -28,6 +28,7 @@ public class UsuarioResponseDTO {
     private Integer xpTotal;
     private Boolean ativo;
     private LocalDateTime dataCadastro;
+    private String perfil;
 
     public UsuarioResponseDTO(Usuario usuario) {
         this.id = usuario.getId();
@@ -44,5 +45,6 @@ public class UsuarioResponseDTO {
         this.xpTotal = usuario.getXpTotal();
         this.ativo = usuario.getAtivo();
         this.dataCadastro = usuario.getDataCadastro();
+        this.perfil = (usuario.getPerfil() != null ? usuario.getPerfil() : br.cefetmg.grow.model.Perfil.ALUNO).name();
     }
 }

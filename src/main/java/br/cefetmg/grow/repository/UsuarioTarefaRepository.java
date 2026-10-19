@@ -4,6 +4,7 @@ import br.cefetmg.grow.model.UsuarioTarefa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UsuarioTarefaRepository extends JpaRepository<UsuarioTarefa, Long> {
     
@@ -14,4 +15,8 @@ public interface UsuarioTarefaRepository extends JpaRepository<UsuarioTarefa, Lo
     List<UsuarioTarefa> findByConcluidaTrue();
     
     List<UsuarioTarefa> findByConcluidaFalse();
+
+    Optional<UsuarioTarefa> findByUsuarioIdAndAtividadeId(Long usuarioId, Long atividadeId);
+
+    boolean existsByUsuarioIdAndAtividadeId(Long usuarioId, Long atividadeId);
 }

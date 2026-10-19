@@ -49,15 +49,18 @@ public class UsuarioTurmaController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioTurmaResponseDTO> criar(@Valid @RequestBody UsuarioTurmaRequestDTO dto) {
+    public ResponseEntity<UsuarioTurmaResponseDTO> criar(@org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario, @Valid @RequestBody UsuarioTurmaRequestDTO dto) {
+        dto.setUsuarioId(usuario.getId());
         UsuarioTurmaResponseDTO criado = usuarioTurmaService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioTurmaResponseDTO> atualizar(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal br.cefetmg.grow.model.Usuario usuario,
             @PathVariable Long id,
             @Valid @RequestBody UsuarioTurmaRequestDTO dto) {
+        dto.setUsuarioId(usuario.getId());
         return ResponseEntity.ok(usuarioTurmaService.atualizar(id, dto));
     }
 

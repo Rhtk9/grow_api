@@ -50,7 +50,6 @@ public class EspeciePlantaRequestDTO {
     @Schema(description = "Indica se a espécie é visível para todos os usuários", example = "false")
     private Boolean publica = false;
 
-    @NotNull(message = "ID do usuário criador é obrigatório")
     @Schema(description = "ID do usuário que está cadastrando a espécie", example = "1")
     private Long usuarioId;
 
